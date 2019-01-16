@@ -12,6 +12,9 @@ var utillogger =require('./util/logger');
 var notesRouter = require('./routes/notes.route');
 
 
+const port = 5000;
+app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
