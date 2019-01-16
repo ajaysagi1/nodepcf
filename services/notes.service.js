@@ -1,5 +1,5 @@
 const logger = require('../util/logger');
-const STATUS_CODES = require('../util/statuscodes');
+const STATUS_CODES = require('../util/statusCodes');
 const userModel = require('../models/users.model');
 const hostModel = require('../models/hostNotes.model');
 const attendeeModel = require('../models/attendeesNotes.model');
