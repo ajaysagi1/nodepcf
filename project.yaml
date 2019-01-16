@@ -1,0 +1,619 @@
+swagger: "2.0"
+info:
+  description: "Meeting Notes Application."
+  version: "1.0.0"
+  title: "Swagger Documentation for Meeting Notes"
+host: "localhost:3000"
+basePath: "/notes"
+tags:
+- name: "tokenGen"
+  description: "Token has Generated"
+- name: "Login"
+  description: "User has to Login data"
+- name: "AllUsers"
+  description: "Displays a list of Users"
+- name: "Invited Meetings"
+  description: "Displays a list of Meetings which user was invited"
+- name: "Add Notes"
+  description: "User can create a Meeting"
+- name: "AllNotes"
+  description: "Displays a list of Meeting Notes that user has created and invited"
+- name: "Update Notes"
+  description: "Updates meeting note based on Meeting Information"
+- name: "Delete Notes"
+  description: "Deletes meeting note based Email and Id"
+schemes:
+- "http"
+paths:
+  /tokenGen:
+    get:
+      tags:
+      - "tokenGen"
+      summary: "Gives details of User who logged in"
+      description: "Gives complete details of user and users who reports to the particular user logged in."
+      operationId: "tokenGen"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successfully Token generated"
+          schema:
+            $ref: "#/definitions/gettoken_response_200"
+        400:
+          description: "Incorrect Email/Password"
+        404:
+          description: "No Data Found"
+      # x-swagger-router-controller: "Users"
+  /login:
+    get:
+      tags:
+      - "Login"
+      summary: "Gives details of User who logged in"
+      description: "Gives complete details of user and users who reports to the particular user logged in."
+      operationId: "getUserData"
+      produces:
+      - "application/json"
+      parameters: 
+      - name: "api_key"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "Email"
+        in: "query"
+        description: "Email to login particlar User"
+        required: true
+        type: "string"
+      - name: "Password"
+        in: "query"
+        description: "Password for login"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/getloginuser_response_200"
+        400:
+          description: "Incorrect Email/Password"
+        404:
+          description: "No Data Found"
+      security:
+        - APIKey: []
+      # x-swagger-router-controller: "Users"
+  /getAllUsers:
+    get:
+      tags:
+      - "AllUsers"
+      summary: "Gives List of All Users"
+      description: "Gives list of Users except the user in query parameter and the list of users reports to the particular user"
+      operationId: "getUsers"
+      produces:
+      - "application/json"
+      parameters: 
+      - name: "Email"
+        in: "query"
+        description: "Email for listing users"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/getalluser_response_200"
+        400:
+          description: "Incorrect Email Address"
+        404:
+          description: "Email Not Found"
+      security:
+        - APIKey: []
+      # x-swagger-router-controller: "Users"
+  /getMeetings:
+    get:
+      tags:
+      - "Invited Meetings"
+      summary: "Gives List of Meetings"
+      description: "Displays a list of Meetings which user was invited"
+      operationId: "getAllMeetings"
+      produces:
+      - "application/json"
+      parameters: 
+      - name: "HostUserId"
+        in: "query"
+        description: "HostUserId for listing meeting invitations"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/getmeeting_response_200"
+        404:
+          description: "No data Found"
+      security:
+        - APIKey: []
+      # x-swagger-router-controller: "Users"
+  /addNote:
+    post:
+      tags:
+      - "Add Notes"
+      summary: "Adding Attendees to the Meeting"
+      description: "User can add Attendees, Title, Description regarding the Meeting"
+      operationId: "addNote"
+      produces:
+      - "application/json"
+      parameters: 
+      - in: "body"
+        name: "body"
+        description: "Created an Meeting Note"
+        required: true
+        schema:
+          $ref: "#/definitions/Note"
+      responses:
+        405:
+          description: "Invalid input"
+        200:
+          description: "successful operation"
+      security:
+        - APIKey: []
+      # x-swagger-router-controller: "Users"
+  /getAllNotes:
+    get:
+      tags:
+      - "AllNotes"
+      summary: "Gives List of All Notes"
+      description: "Gives list of Meetings that the user got invited for meeting"
+      operationId: "getNotes"
+      produces:
+      - "application/json"
+      parameters: 
+      - name: "Email"
+        in: "query"
+        description: "Email for listing users"
+        required: true
+        type: "string"
+      - name: "HostUserId"
+        in: "query"
+        description: "Based on Unique Id"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/getallnotes_response_200"
+        400:
+          description: "Incorrect Email Address"
+        404:
+          description: "Email Not Found"
+      security:
+        - APIKey: []
+  /update:
+    put:
+      tags:
+      - "Update Notes"
+      summary: "Update an existing meeting Note "
+      description: "Updates meeting note based on Meeting Information"
+      operationId: "updateNotes"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "Email"
+        in: "query"
+        description: "Email for updating notes"
+        required: true
+        type: "string"
+      - name: "Id"
+        in: "query"
+        description: "Id for updating notes"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          $ref: "#/definitions/update_note_request_200"
+      responses:
+        200:
+          description: "successfully Note Updated"
+        404:
+          description: "Email/Id Not Found"
+      security:
+        - APIKey: [] 
+  /delete:
+    delete:
+      tags:
+      - "Delete Notes"
+      summary: "Deletes a meeting note"
+      description: "Deletes meeting note based Email and Id"
+      operationId: "deleteNotes"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Email"
+        in: "query"
+        required: true
+        type: "string"
+      - name: "Id"
+        in: "query"
+        description: "Meeting note to delete"
+        type: "integer"
+        required: true
+      responses:
+        200:
+          description: "Successfully Note Deleted"
+        400:
+          description: "Invalid Email/ID supplied"
+        404:
+          description: "Email/Id not found"
+      security:
+        - APIKey: []
+securityDefinitions:
+  APIKey:
+    type: apiKey
+    name: token
+    in: header 
+definitions:
+  gettoken_response_200:
+    type: "object"
+    properties:
+      StatusCode: 
+        type: "integer"
+        format: "int64"
+        example: "200"
+      Info:
+        type: "string"
+        example: "Successfully token generated"
+      token:
+        type: "integer"
+        format: "int64"
+        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InVzZXJzIiwiaWF0IjoxNTQ3MjA3NDI5LCJleHAiOjE1NDcyMDc5Mjl9.R8TUk6B7xDGT-XAqGsucUagL2YklSXQf_aglSrNQOgo"
+  getloginuser_response_200:
+    type: "object"
+    properties:
+      statusCode:
+        type: "integer"
+        format: "int64"
+      info:
+        type: "string"
+        format: "int64"
+      UserId: 
+        type: "integer"
+        format: "int64"
+      UserName:
+        type: "string"
+        example: "Miracle"
+      Email:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      Designation:
+        type: "string"
+        example: "Developer"
+      Location:
+        type: "string"
+        example: "Vizag"
+      Department:
+        type: "string"
+        example: "Development"
+      ReportsTo:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      IsDeleted: 
+        type: "integer"
+        format: "int64"
+      CreatedOn:
+        type: "integer"
+        format: "int64"
+      MofifiedOn:
+        type: "integer"
+        example: "int64"
+      CreatedBy:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      ModifiedBy:
+        type: "string"
+        example: "abc@miraclesoft.com"  
+  getalluser_response_200:
+    type: "object"
+    properties:
+      statusCode:
+        type: "integer"
+        format: "int64"
+      info:
+        type: "string"
+        format: "int64"
+      Users:
+        type: "array"
+        xml:
+          name: "Users"
+          wrapped: true
+        items:
+          $ref: "#/definitions/user_response"
+  user_response:
+    type: "object"
+    properties:
+      UserId: 
+        type: "integer"
+        format: "int64"
+      UserName:
+        type: "string"
+        example: "Miracle"
+      Email:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      Designation:
+        type: "string"
+        example: "Developer"
+      Location:
+        type: "string"
+        example: "Vizag"
+      Department:
+        type: "string"
+        example: "Development"
+      ReportsTo:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      IsDeleted: 
+        type: "integer"
+        format: "int64"
+      CreatedOn:
+        type: "integer"
+        example: "2019-01-01 00:00:00"
+      MofifiedOn:
+        type: "integer"
+        example: "2019-01-01 00:00:00"
+      CreatedBy:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      ModifiedBy:
+        type: "string"
+        example: "abc@miraclesoft.com"
+  Note:
+    type: "object"
+    properties:
+      HostUserId:
+        type: "integer"
+        format: "int64"
+      Title:
+        type: "string"
+        example: "ABC"
+      Description:
+        type: "string"
+        example: "Complete Description about meeting"
+      Attendees:
+        type: "array"
+        items:
+          $ref: "#/definitions/addnote_attendee"
+      HostName: 
+        type: "string"
+        example: "Miracle"
+      HostDate:
+        type: "integer"
+        format: "int64"
+        example: 2019-01-01
+      Email:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      Summary:
+        type: "string"
+        example: "Brief description about title"
+      IsDeleted:
+        type: "integer"
+        format: "int64"
+      CreatedBy:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      ModifiedBy:
+        type: "string"
+        example: "abc@miraclesoft.com"
+  addnote_attendee:
+    type: "object"
+    properties:
+      AttendeeUserId: 
+        type: "integer"
+        format: "int64"
+      AttendeeEmail:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      Title:
+        type: "string"
+        example: "ABC"
+      Description:
+        type: "string"
+        example: "Complete Description about meeting"
+      Summary:
+        type: "string"
+        example: "Brief description about title"
+  getmeeting_response_200:
+    type: "object"
+    properties:
+      statusCode:
+        type: "integer"
+        format: "int64"
+        example: 200
+      info:
+        type: "string"
+        example: "Successful operation"
+      InvitedNotes:
+        type: "array"
+        xml:
+          name: "Users"
+          wrapped: true
+        items:
+          $ref: "#/definitions/invited_user"
+  invited_user:
+    type: "object"
+    properties:
+      Id: 
+        type: "integer"
+        format: "int64"
+      HostId:
+        type: "integer"
+        format: "int64"
+        example: "40"
+      HostEmail:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      HostName:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      AttendeeUserId:
+        type: "integer"
+        example: "1"
+      Title:
+        type: "string"
+        example: "ABC"
+      Description:
+        type: "string"
+        example: "Regarding Title"
+      Summary:
+        type: "string"
+        example: "About Details of Title"
+      IsDeleted: 
+        type: "integer"
+        format: "int64"
+      HostDate:
+        type: "integer"
+        example: "2019-01-01 00:00:00"
+      CreatedOn:
+        type: "integer"
+        example: "2019-01-01 00:00:00"
+      MofifiedOn:
+        type: "integer"
+        example: "2019-01-01 00:00:00"
+      CreatedBy:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      ModifiedBy:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      Status:
+        type: "string"
+        example: "Pending"
+  getallnotes_response_200:
+    type: "object"
+    properties:
+      statusCode:
+        type: "integer"
+        format: "int64"
+      info:
+        type: "string"
+        format: "int64"
+      Created Notes:
+        type: "array"
+        xml:
+          name: "Users"
+          wrapped: true
+        items:
+          $ref: "#/definitions/all_notes"
+      Invited Notes:
+        type: "array"
+        xml:
+          name: "Users"
+          wrapped: true
+        items:
+          $ref: "#/definitions/allinvited_notes"
+  all_notes:
+    type: "object"
+    properties:
+      Id: 
+        type: "integer"
+        format: "int64"
+      HostUserId:
+        type: "integer"
+        format: "int64"
+      Title:
+        type: "string"
+        example: "ABC"
+      Description:
+        type: "string"
+        example: "Regarding Title"
+      Attendees:
+        type: "array"
+        items:
+          $ref: "#/definitions/addinvite_attendee"
+  addinvite_attendee:
+    type: "object"
+    properties:
+      AttendeeUserId: 
+        type: "integer"
+        format: "int64"
+      AttendeeEmail:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      Title:
+        type: "string"
+        example: "ABC"
+      Description:
+        type: "string"
+        example: "Complete Description about meeting"
+      Summary:
+        type: "string"
+        example: "Brief description about title"
+  allinvited_notes: 
+    type: "object"
+    properties:
+      Id: 
+        type: "integer"
+        format: "int64"
+      HostId:
+        type: "integer"
+        format: "int64"
+        example: "40"
+      HostEmail:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      HostName:
+        type: "string"
+        example: "Vinod Sagi"
+      AttendeeUserId:
+        type: "integer"
+        example: "1"
+      Title:
+        type: "string"
+        example: "ABC"
+      Description:
+        type: "string"
+        example: "Regarding Title"
+      Summary:
+        type: "string"
+        example: "About Details of Title"
+      IsDeleted: 
+        type: "integer"
+        format: "int64"
+      HostDate:
+        type: "integer"
+        example: "2019-01-01 00:00:00"
+      CreatedOn:
+        type: "integer"
+        example: "2019-01-01 00:00:00"
+      MofifiedOn:
+        type: "integer"
+        example: "2019-01-01 00:00:00"
+      CreatedBy:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      ModifiedBy:
+        type: "string"
+        example: "abc@miraclesoft.com"
+      Status:
+        type: "string"
+        example: "Pending"
+  update_note_request_200:
+    type: "object"
+    properties:
+      Title:
+        type: "string"
+        example: "ABC"
+      Summary:
+        type: "string"
+        example: "Brief description about title"
+      Description:
+        type: "string"
+        example: "Complete Description about meeting"
+      HostDate:
+        type: "integer"
+        example: "2019-01-01T00:00:00"
