@@ -15,5 +15,11 @@ router.get('/getAllNotes',services.getNotes);
 router.post('/addNote',joi(schema.hostSchema),services.addNotes);
 router.put('/update',services.updateNotes);
 router.delete('/delete',services.deleteNotes);
+router.get('/info',function(req,res,next){
 
+    res.send({
+        "Status":200,
+        "Info": "Meeting Notes App"
+    })
+});
 module.exports = router;
