@@ -8,7 +8,7 @@ const services = require('../services/notes.service');
 
 //API Endpoints
 router.get('/tokenGen',services.tokenGen);
-router.get('/login',services.getUserData);
+router.get('/log',services.getUserData);
 router.get('/getAllUsers',verifyToken,services.getUsers);
 router.get('/getMeetings',services.getAllMeetings);
 router.get('/getAllNotes',services.getNotes);
